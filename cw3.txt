@@ -1,0 +1,76 @@
+create table pracownik (
+id_pracownika int auto_increment primary key, 
+imie varchar(40) not null, nazwisko varchar(60) not null,
+data_urodzenia date not null);
+
+insert into pracownik (imie,nazwisko,data_urodzenia) values 
+('Jan','Kowalski','1970-11-20'),
+('Tomasz','Problem','2004-01-30'),
+('Joanna','Rosińska','2003-08-13');
+
+update pracownik set data_urodzenia = "2000-01-01" where id_pracownika = 2;
+
+
+create table zadania (
+id_zadania int auto_increment primary key,
+nazwa_zadania varchar(150) not null,
+piorytet enum('normalny','wysoki','niski'),
+opis longtext,
+pracownik int,
+foreign key(pracownik) references pracownik(id_pracownika) on delete set null);
+
+alter table zadania modify piorytet enum('normalny','wysoki','niski') default 'normalny';
+
+insert into zadania(nazwa_zadania,piorytet,opis,pracownik) values
+('Naprawa drukarki','normalny','naprawa drukarki nr3, nie włącza się','3'),
+('Przygotowanie planu Projektu','wysoki','Należy przygotować plan działań na projekt dla ważnego klienta','1'),
+('Przeniesienie sprzętu','niski','Przeniesienie sprzętu z stanowiska nr4 do magazynu, gdyż nie jest już ono potrzebne','2');
+
+create table projekt (
+id_projektu int auto_increment primary key,
+nazwa_projektu varchar(150) not null,
+data_rozpoczecia date,
+data_zakonczenia date null);
+
+alter table projekt add menadzer_projektu int, add foreign key(menadzer_projektu) references pracownik(id_pracownika);
+
+
+
+insert into projekt(nazwa_projektu,data_rozpoczecia,data_zakonczenia,menadzer_projektu) values
+('Firmowy asystent SI','2024-10-25',null,'2'),
+('Aplikacja Webowa','2023-04-10','2026-08-23','3');
+
+alter table zadania add projekt int, add foreign key(projekt) references projekt(id_projektu) on delete cascade;
+
+update zadania set projekt = 2 where id_zadania >1;
+
+update zadania set projekt = 1 where id_zadania =1;
+
+create table sprint (
+id_sprintu int auto_increment primary key,
+numer_sprintu int,
+data_rozpoczecia date,
+data_zakonczenia date);
+
+alter table zadania add sprint int default null, add foreign key(sprint) references sprint(id_sprintu) on delete set null;
+
+insert into sprint (numer_sprintu,data_rozpoczecia,data_zakonczenia) values ('3','2024-09-20','2024-09-30');
+
+update zadania set sprint = 1 where id_zadania =2;
+
+create table status (
+id_statusu int auto_increment primary key,
+nazwa_statusu varchar(20) not null);
+
+insert into status(nazwa_statusu) values
+("Open"),("In progress"),("Testing");
+
+create table zadania_has_status (
+id_zdarzenia int auto_increment primary key,
+nazwa_statusu varchar(20) not null,
+id_zadania int,
+foreign key(id_zadania) references zadania(id_zadania),
+id_statusu int,
+foreign key(id_statusu) references status(id_statusu),
+data_zdarzenia datetime default current_timestamp)
+
