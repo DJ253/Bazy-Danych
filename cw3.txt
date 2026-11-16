@@ -68,7 +68,7 @@ insert into status(nazwa_statusu) values
 create table zadania_has_status (
 id_zdarzenia int auto_increment primary key,
 id_zadania int,
-foreign key(id_zadania) references zadania(id_zadania),
+foreign key(id_zadania) references zadania(id_zadania) on delete cascade,
 id_statusu int,
 foreign key(id_statusu) references status(id_statusu),
 data_zdarzenia datetime default current_timestamp);
@@ -80,4 +80,7 @@ insert into zadania_has_status(id_zadania,id_statusu,data_zdarzenia) values
 
 delete from projekt where id_projektu = 1;
 
-drop table sprint
+select * from zadania;
+
+ALTER TABLE zadania DROP FOREIGN KEY zadania_ibfk_3;
+drop table sprint;
