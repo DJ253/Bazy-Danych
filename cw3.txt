@@ -22,9 +22,9 @@ foreign key(pracownik) references pracownik(id_pracownika) on delete set null);
 alter table zadania modify piorytet enum('normalny','wysoki','niski') default 'normalny';
 
 insert into zadania(nazwa_zadania,piorytet,opis,pracownik) values
-('Naprawa drukarki','normalny','naprawa drukarki nr3, nie włącza się','3'),
-('Przygotowanie planu Projektu','wysoki','Należy przygotować plan działań na projekt dla ważnego klienta','1'),
-('Przeniesienie sprzętu','niski','Przeniesienie sprzętu z stanowiska nr4 do magazynu, gdyż nie jest już ono potrzebne','2');
+('Poprawienie działania kodu','normalny','jest możliwość napisania szybciej działającego algorytmu','3'),
+('Naprawienie krytycznego błędu','wysoki','została znaleziona nowa luka w bezpieczeństwie','1'),
+('Rozwój możliwości programu','niski','Dodanie nowych funkcji','2');
 
 create table projekt (
 id_projektu int auto_increment primary key,
@@ -42,9 +42,9 @@ insert into projekt(nazwa_projektu,data_rozpoczecia,data_zakonczenia,menadzer_pr
 
 alter table zadania add projekt int, add foreign key(projekt) references projekt(id_projektu) on delete cascade;
 
-update zadania set projekt = 2 where id_zadania >1;
+update zadania set projekt = 1 where id_zadania >1;
 
-update zadania set projekt = 1 where id_zadania =1;
+update zadania set projekt = 2 where id_zadania =1;
 
 create table sprint (
 id_sprintu int auto_increment primary key,
@@ -63,14 +63,21 @@ id_statusu int auto_increment primary key,
 nazwa_statusu varchar(20) not null);
 
 insert into status(nazwa_statusu) values
-("Open"),("In progress"),("Testing");
+("Open"),("In progress"),("Done");
 
 create table zadania_has_status (
 id_zdarzenia int auto_increment primary key,
-nazwa_statusu varchar(20) not null,
 id_zadania int,
 foreign key(id_zadania) references zadania(id_zadania),
 id_statusu int,
 foreign key(id_statusu) references status(id_statusu),
-data_zdarzenia datetime default current_timestamp)
+data_zdarzenia datetime default current_timestamp);
 
+insert into zadania_has_status(id_zadania,id_statusu,data_zdarzenia) values
+(1,3,'2025-03-03 12:45:00'),
+(2,2,default),
+(3,1,default);
+
+delete from projekt where id_projektu = 1;
+
+drop table sprint
